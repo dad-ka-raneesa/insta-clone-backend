@@ -1,8 +1,7 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const PORT = 8080;
-const { MONGOURI } = require('./keys');
+const { MONGOURI } = require('../keys');
 
 mongoose.connect(MONGOURI, {
   useNewUrlParser: true,
@@ -24,4 +23,4 @@ app.use(express.json());
 app.use(require('./routes/auth'));
 app.use(require('./routes/post'));
 
-app.listen(PORT, () => console.log("Server is listening on ", PORT));
+module.exports = { app };
