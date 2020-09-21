@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../../keys');
 
-router.post('/signUp', (req, res) => {
+router.post('/signup', (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res.status(422).json({ error: 'Please add all the fields' })
@@ -37,10 +37,10 @@ router.post('/signUp', (req, res) => {
     })
 })
 
-router.post('/signIn', (req, res) => {
+router.post('/signin', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(422).json({ error: "Please add email ans password" });
+    return res.status(422).json({ error: "Please add email and password" });
   }
   User.findOne({ email: email })
     .then(savedUser => {
@@ -51,7 +51,8 @@ router.post('/signIn', (req, res) => {
         .then(didMatched => {
           if (didMatched) {
             const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET)
-            return res.json({ token });
+            const { _id, name, email } = savedUser;
+            return res.json({ token, user: { _id, name, email } });
             // return res.json({ message: "Successfully signed in" });
           }
           else {
