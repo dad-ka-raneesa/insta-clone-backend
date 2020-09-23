@@ -11,9 +11,7 @@ router.get('/allPosts', requireLogin, (req, res) => {
     .then(posts => {
       res.json({ posts })
     })
-    .catch(err => {
-      console.log(err);
-    })
+    .catch(err => console.log(err))
 })
 
 router.post('/createPost', requireLogin, (req, res) => {
@@ -32,9 +30,7 @@ router.post('/createPost', requireLogin, (req, res) => {
   post.save().then(result => {
     res.json({ post: result });
   })
-    .catch(err => {
-      console.log(err);
-    })
+    .catch(err => console.log(err))
 })
 
 router.get('/myPosts', requireLogin, (req, res) => {
@@ -43,9 +39,7 @@ router.get('/myPosts', requireLogin, (req, res) => {
     .then(myPosts => {
       res.send({ myPosts })
     })
-    .catch(err => {
-      console.log(err);
-    })
+    .catch(err => console.log(err))
 })
 
 router.post('/like', requireLogin, (req, res) => {
@@ -55,7 +49,6 @@ router.post('/like', requireLogin, (req, res) => {
     new: true
   }).exec((err, result) => {
     if (err) {
-      console.log(err);
       res.status(422).json({ error: err });
     } else {
       res.json(result);
@@ -93,6 +86,25 @@ router.post('/comment', requireLogin, (req, res) => {
         res.status(422).json({ error: err });
       } else {
         res.json(result);
+      }
+    })
+})
+
+router.delete('/deletePost/:postId', requireLogin, (req, res) => {
+  console.log("delete");
+  console.log("params", req.params.postId);
+  Post.findOne({ _id: req.params.postId })
+    .populate('postedBy', '_id')
+    .exec((err, post) => {
+      if (err || !post) {
+        return res.status(422).json({ error: err || 'No post by this id' })
+      }
+      if (post.postedBy._id.toString() === req.user._id.toString()) {
+        post.remove()
+          .then(result => {
+            res.json(result)
+          })
+          .catch(err => console.log(err))
       }
     })
 })
