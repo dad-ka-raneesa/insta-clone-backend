@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 router.post('/signup', (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, image } = req.body;
   if (!name || !email || !password) {
     return res.status(422).json({ error: 'Please add all the fields' })
   }
@@ -20,7 +20,8 @@ router.post('/signup', (req, res) => {
           const user = new User({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            image
           });
           user.save()
             .then(user => {
@@ -50,8 +51,8 @@ router.post('/signin', (req, res) => {
         .then(didMatched => {
           if (didMatched) {
             const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET)
-            const { _id, name, email, followers, following } = savedUser;
-            return res.json({ token, user: { _id, name, email, followers, following } });
+            const { _id, name, email, followers, following, image } = savedUser;
+            return res.json({ token, user: { _id, name, email, followers, following, image } });
           }
           else {
             return res.status(422).json({ error: "Invalid email or password" });
