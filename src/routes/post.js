@@ -102,8 +102,6 @@ router.post('/comment', requireLogin, (req, res) => {
 })
 
 router.delete('/deletePost/:postId', requireLogin, (req, res) => {
-  console.log("delete");
-  console.log("params", req.params.postId);
   Post.findOne({ _id: req.params.postId })
     .populate('postedBy', '_id')
     .exec((err, post) => {
@@ -118,6 +116,16 @@ router.delete('/deletePost/:postId', requireLogin, (req, res) => {
           .catch(err => console.log(err))
       }
     })
+})
+
+router.get('/allComments/:postId', requireLogin, (req, res) => {
+  Post.findOne({ _id: req.params.postId })
+    .populate('postedBy', '_id name')
+    .populate('comments.postedBy', '_id name')
+    .then(details => {
+      res.json({ details })
+    })
+    .catch(err => console.log(err))
 })
 
 module.exports = router;
