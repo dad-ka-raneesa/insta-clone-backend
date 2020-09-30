@@ -16,13 +16,13 @@ mongoose.connection.on('error', (err) => {
   console.log('err in connecting', err);
 })
 
-require('./models/user');
-require('./models/post');
+require('./src/models/user');
+require('./src/models/post');
 
 app.use(express.json());
-app.use(require('./routes/auth'));
-app.use(require('./routes/post'));
-app.use(require('./routes/user'));
+app.use(require('./src/routes/auth'));
+app.use(require('./src/routes/post'));
+app.use(require('./src/routes/user'));
 
 if (process.env.NODE_ENV == 'production') {
   app.use(express.static('client/build'));
